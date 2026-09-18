@@ -1,0 +1,531 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tactical OSINT Training Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg: #050816;
+      --bg-alt: #0b1020;
+      --accent: #4f46e5;
+      --accent-soft: #6366f1;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --border: #1f2937;
+    }
+    * {
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #111827 0, #020617 45%, #000 100%);
+      color: var(--text);
+    }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(16px);
+      background: rgba(15, 23, 42, 0.85);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .nav-title {
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    nav a {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.85rem;
+      padding: 0.35rem 0.6rem;
+      border-radius: 999px;
+      transition: background 0.2s, color 0.2s, transform 0.1s;
+    }
+    nav a:hover {
+      background: rgba(79, 70, 229, 0.18);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+    section {
+      margin-bottom: 2.5rem;
+      padding: 1.5rem;
+      border-radius: 1rem;
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(17, 24, 39, 0.9));
+      border: 1px solid rgba(55, 65, 81, 0.7);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.8);
+    }
+    h1, h2, h3 {
+      margin-top: 0;
+      letter-spacing: 0.03em;
+    }
+    h1 {
+      font-size: 1.8rem;
+    }
+    h2 {
+      font-size: 1.3rem;
+      color: var(--accent-soft);
+    }
+    h3 {
+      font-size: 1.05rem;
+      color: var(--muted);
+    }
+    p {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--text);
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+      background: rgba(55, 65, 81, 0.5);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+    ul {
+      list-style: none;
+      padding-left: 0;
+      margin: 0.5rem 0 0.75rem;
+    }
+    li {
+      margin-bottom: 0.4rem;
+      font-size: 0.92rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.4rem;
+    }
+    li::before {
+      content: "•";
+      color: var(--accent-soft);
+      font-size: 1rem;
+      line-height: 1.2;
+    }
+    code {
+      font-family: "JetBrains Mono", Consolas, monospace;
+      font-size: 0.85rem;
+      background: rgba(15, 23, 42, 0.9);
+      padding: 0.15rem 0.35rem;
+      border-radius: 0.35rem;
+      border: 1px solid rgba(55, 65, 81, 0.8);
+      color: #a5b4fc;
+    }
+    pre {
+      background: rgba(15, 23, 42, 0.95);
+      padding: 0.75rem;
+      border-radius: 0.75rem;
+      border: 1px solid rgba(55, 65, 81, 0.8);
+      overflow-x: auto;
+      font-size: 0.85rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+      margin-top: 0.75rem;
+    }
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.75rem;
+    }
+    .badge {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid rgba(75, 85, 99, 0.9);
+      color: var(--muted);
+    }
+    .shortcut {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      margin: 0.15rem 0.35rem 0.15rem 0;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .key {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 1.6rem;
+      padding: 0.15rem 0.4rem;
+      border-radius: 0.35rem;
+      border: 1px solid rgba(75, 85, 99, 0.9);
+      background: rgba(15, 23, 42, 0.9);
+      font-size: 0.75rem;
+      color: #e5e7eb;
+    }
+    .practice {
+      margin-top: 0.75rem;
+      padding-top: 0.75rem;
+      border-top: 1px dashed rgba(75, 85, 99, 0.7);
+    }
+    .practice h3 {
+      color: #facc15;
+    }
+    footer {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1rem 1.5rem 2rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-align: center;
+    }
+    @media (max-width: 640px) {
+      .nav {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      main {
+        padding: 1rem;
+      }
+      section {
+        padding: 1.1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <div class="nav-title">Tactical OSINT Training Hub</div>
+      <nav>
+        <a href="#home">Home</a>
+        <a href="#zeroclick">Zero‑Click</a>
+        <a href="#dorking">Google Dorking</a>
+        <a href="#school">School‑Friendly</a>
+        <a href="#offline">Offline</a>
+        <a href="#shortcuts">Shortcuts</a>
+        <a href="#practice">Practice Zone</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- HOME / MISSION -->
+    <section id="home">
+      <span class="pill">Mission Briefing</span>
+      <h1>Tactical OSINT Training Hub</h1>
+      <p>
+        This site teaches students how to gather information <strong>without AI tools</strong>, using
+        search engines, school‑friendly websites, offline resources, and keyboard shortcuts. It is
+        designed for classrooms and students with <strong>limited access</strong> to devices or internet.
+      </p>
+      <div class="grid">
+        <div>
+          <h2>What You Will Learn</h2>
+          <ul>
+            <li>How to use zero‑click search to get answers directly from the results page.</li>
+            <li>How to use beginner‑level, safe Google Dorking to filter public information.</li>
+            <li>How to find credible, school‑friendly sources (.gov, .edu, libraries).</li>
+            <li>How to research offline using books, handouts, and experts.</li>
+            <li>How to move faster using keyboard shortcuts on any school computer.</li>
+          </ul>
+        </div>
+        <div>
+          <h2>Navigation Map</h2>
+          <ul>
+            <li><a href="#zeroclick">Zero‑Click Search</a> — fast answers from the SERP.</li>
+            <li><a href="#dorking">Google Dorking</a> — safe filters for public info.</li>
+            <li><a href="#school">School‑Friendly OSINT</a> — trusted websites.</li>
+            <li><a href="#offline">Offline Research</a> — no internet required.</li>
+            <li><a href="#shortcuts">Speed Shortcuts</a> — keyboard‑based efficiency.</li>
+            <li><a href="#practice">Practice Zone</a> — challenges and drills.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="badge-row">
+        <span class="badge">No AI Tools</span>
+        <span class="badge">Student‑Friendly</span>
+        <span class="badge">Low Resource</span>
+        <span class="badge">Research Skills</span>
+      </div>
+    </section>
+
+    <!-- ZERO-CLICK SEARCH -->
+    <section id="zeroclick">
+      <span class="pill">Module 1</span>
+      <h2>Zero‑Click Search (Answers Without Clicking)</h2>
+      <p>
+        Zero‑click search means you type a query and get the answer <strong>directly on the search
+        results page</strong> (SERP). This saves time and works well on slow school computers.
+      </p>
+
+      <h3>Useful Zero‑Click Patterns</h3>
+      <ul>
+        <li><code>define osmosis</code> — dictionary box with a short definition.</li>
+        <li><code>what is photosynthesis</code> — knowledge panel with explanation.</li>
+        <li><code>population of Canada</code> — fact card with the latest number.</li>
+        <li><code>solve 2x+5=15</code> — calculator and step‑by‑step solution.</li>
+        <li><code>5 miles in km</code> — unit conversion box.</li>
+        <li><code>diagram of water cycle</code> — image strip with labeled diagrams.</li>
+      </ul>
+
+      <div class="practice">
+        <h3>Practice Tasks</h3>
+        <ul>
+          <li>Get a one‑sentence definition of <strong>osmosis</strong> without clicking any website.</li>
+          <li>Find the year <strong>Einstein</strong> was born using only the SERP.</li>
+          <li>Convert <strong>5 miles to kilometers</strong> using the conversion box.</li>
+        </ul>
+        <p>
+          <strong>Speed Tip:</strong> Use
+          <span class="shortcut"><span class="key">Ctrl</span> + <span class="key">F</span></span>
+          to search inside the SERP for specific words (like “definition” or “population”).
+        </p>
+      </div>
+    </section>
+
+    <!-- GOOGLE DORKING -->
+    <section id="dorking">
+      <span class="pill">Module 2</span>
+      <h2>Google Dorking (Beginner, Safe, School‑Friendly)</h2>
+      <p>
+        Google Dorking is <strong>not hacking</strong>. It uses special search operators to filter
+        <strong>public information</strong> that Google already indexes. Here we only use
+        <strong>safe, student‑friendly</strong> examples.
+      </p>
+
+      <h3>Core Operators</h3>
+      <pre><code>site:      limit results to a specific website or domain
+filetype:  search for a specific file type (pdf, doc, ppt)
+intitle:   search for words in the page title
+inurl:     search for words in the URL
+intext:    search for words in the page text
+"..."      search for an exact phrase
+</code></pre>
+
+      <h3>Student‑Friendly Examples</h3>
+      <ul>
+        <li>
+          Find government PDFs about climate change:
+          <br /><code>site:.gov filetype:pdf "climate change"</code>
+        </li>
+        <li>
+          Find public math practice worksheets:
+          <br /><code>filetype:pdf "math practice"</code>
+        </li>
+        <li>
+          Find university pages about the civil rights movement:
+          <br /><code>site:.edu "civil rights movement"</code>
+        </li>
+        <li>
+          Find open image directories (use only safe examples your teacher approves):
+          <br /><code>intitle:"index of" "images"</code>
+        </li>
+      </ul>
+
+      <div class="practice">
+        <h3>Practice Tasks</h3>
+        <ul>
+          <li>Find a <strong>.gov PDF</strong> about volcanoes using <code>site:.gov filetype:pdf</code>.</li>
+          <li>Find a <strong>.edu article</strong> explaining photosynthesis.</li>
+          <li>Find a <strong>public PDF</strong> that contains the word “budget”.</li>
+        </ul>
+        <p>
+          <strong>Speed Tip:</strong> Use
+          <span class="shortcut"><span class="key">Ctrl</span> + <span class="key">L</span></span>
+          to jump directly to the browser address/search bar, then type your dork.
+        </p>
+      </div>
+    </section>
+
+    <!-- SCHOOL-FRIENDLY OSINT -->
+    <section id="school">
+      <span class="pill">Module 3</span>
+      <h2>School‑Friendly OSINT Sources</h2>
+      <p>
+        Not all websites are equal. For school research, focus on <strong>trusted domains</strong>
+        and educational portals that teachers and librarians recommend.
+      </p>
+
+      <h3>Trusted Domains & Portals</h3>
+      <ul>
+        <li><strong>.gov</strong> — NASA, CDC, National Archives, government fact sheets.</li>
+        <li><strong>.edu</strong> — university pages, open courses, research summaries.</li>
+        <li><strong>Library of Congress</strong> — historical documents and timelines.</li>
+        <li><strong>Smithsonian</strong> — science, history, and culture resources.</li>
+        <li><strong>Britannica School</strong> — student‑friendly encyclopedia articles.</li>
+        <li><strong>National Geographic Kids</strong> — geography, animals, environment.</li>
+      </ul>
+
+      <h3>Safe Search Patterns</h3>
+      <ul>
+        <li><code>site:.gov "water cycle"</code> — government explanations of the water cycle.</li>
+        <li><code>site:.edu "ancient Egypt"</code> — university pages about ancient Egypt.</li>
+        <li><code>"timeline of WW2" kids</code> — child‑friendly timelines and summaries.</li>
+      </ul>
+
+      <div class="practice">
+        <h3>Practice Tasks</h3>
+        <ul>
+          <li>Find a government fact sheet about <strong>hurricanes</strong> using <code>site:.gov</code>.</li>
+          <li>Find a university explanation of <strong>mitosis</strong> using <code>site:.edu</code>.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- OFFLINE OSINT -->
+    <section id="offline">
+      <span class="pill">Module 4</span>
+      <h2>Offline OSINT (No Internet Required)</h2>
+      <p>
+        Many students have limited internet or blocked websites. Offline OSINT teaches how to
+        research using <strong>physical resources</strong> and people around you.
+      </p>
+
+      <h3>Offline Sources</h3>
+      <ul>
+        <li>Textbooks and workbooks provided by the school.</li>
+        <li>Encyclopedias and reference books in the library.</li>
+        <li>Magazines and journals for current events and science topics.</li>
+        <li>Teacher handouts, worksheets, and printed guides.</li>
+        <li>Interviews with teachers, librarians, and local experts.</li>
+      </ul>
+
+      <h3>Offline Research Workflow</h3>
+      <ul>
+        <li><strong>Define the question</strong> — e.g., “What caused World War I?”</li>
+        <li><strong>Use the index</strong> — look up “World War I” or “causes” in the back.</li>
+        <li><strong>Scan headings</strong> — read section titles and subheadings.</li>
+        <li><strong>Collect facts</strong> — write down dates, events, and key causes.</li>
+        <li><strong>Cross‑check</strong> — compare information from two different sources.</li>
+      </ul>
+
+      <div class="practice">
+        <h3>Practice Tasks</h3>
+        <ul>
+          <li>Use a textbook index to find the section on <strong>ecosystems</strong>.</li>
+          <li>Compare two offline sources about the same topic and list similarities.</li>
+        </ul>
+        <p>
+          <strong>Speed Tip:</strong> Use sticky notes or page flags as
+          <em>offline bookmarks</em> to mark important pages quickly.
+        </p>
+      </div>
+    </section>
+
+    <!-- SHORTCUTS -->
+    <section id="shortcuts">
+      <span class="pill">Module 5</span>
+      <h2>Speed Shortcuts (Keyboard‑Based OSINT)</h2>
+      <p>
+        Keyboard shortcuts help you move faster on school computers, especially when the mouse is
+        slow or the trackpad is hard to use.
+      </p>
+
+      <h3>Browser Shortcuts</h3>
+      <p>
+        <span class="shortcut"><span class="key">Ctrl</span> + <span class="key">T</span></span> New tab
+        <br />
+        <span class="shortcut"><span class="key">Ctrl</span> + <span class="key">W</span></span> Close tab
+        <br />
+        <span class="shortcut"><span class="key">Ctrl</span> + <span class="key">Shift</span> + <span class="key">T</span></span> Reopen closed tab
+        <br />
+        <span class="shortcut"><span class="key">Ctrl</span> + <span class="key">Tab</span></span> Switch to next tab
+        <br />
+        <span class="shortcut"><span class="key">Ctrl</span> + <span class="key">L</span></span> Jump to address/search bar
+        <br />
+        <span class="shortcut"><span class="key">Ctrl</span> + <span class="key">F</span></span> Find text on the page
+      </p>
+
+      <h3>Text Shortcuts</h3>
+      <p>
+        <span class="shortcut"><span class="key">Ctrl</span> + <span class="key">C</span></span> Copy
+        <br />
+        <span class="shortcut"><span class="key">Ctrl</span> + <span class="key">V</span></span> Paste
+        <br />
+        <span class="shortcut"><span class="key">Ctrl</span> + <span class="key">X</span></span> Cut
+        <br />
+        <span class="shortcut"><span class="key">Ctrl</span> + <span class="key">A</span></span> Select all
+        <br />
+        <span class="shortcut"><span class="key">Ctrl</span> + <span class="key">Z</span></span> Undo
+        <br />
+        <span class="shortcut"><span class="key">Ctrl</span> + <span class="key">Y</span></span> Redo
+      </p>
+
+      <h3>Windows Shortcuts</h3>
+      <p>
+        <span class="shortcut"><span class="key">Alt</span> + <span class="key">Tab</span></span> Switch between apps
+        <br />
+        <span class="shortcut"><span class="key">Win</span> + <span class="key">D</span></span> Show desktop
+        <br />
+        <span class="shortcut"><span class="key">Win</span> + <span class="key">Shift</span> + <span class="key">S</span></span> Open screenshot tool
+      </p>
+
+      <div class="practice">
+        <h3>Practice Tasks</h3>
+        <ul>
+          <li>Open three tabs and switch between them using only keyboard shortcuts.</li>
+          <li>Reopen a closed tab using <strong>Ctrl + Shift + T</strong>.</li>
+          <li>Take a screenshot of a search result using <strong>Win + Shift + S</strong>.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- PRACTICE ZONE -->
+    <section id="practice">
+      <span class="pill">Module 6</span>
+      <h2>Practice Zone (Hands‑On Training)</h2>
+      <p>
+        Use this section as a checklist or mini‑test. Students can work through each challenge to
+        prove they understand the techniques.
+      </p>
+
+      <h3>Zero‑Click Challenges</h3>
+      <ul>
+        <li>Get a definition, a date, and a unit conversion using only the SERP.</li>
+        <li>Find the current weather for your city without clicking any website.</li>
+      </ul>
+
+      <h3>Google Dorking Challenges</h3>
+      <ul>
+        <li>Find a <strong>.gov PDF</strong> about a science topic of your choice.</li>
+        <li>Find a <strong>worksheet PDF</strong> using <code>filetype:pdf "worksheet"</code>.</li>
+      </ul>
+
+      <h3>Offline Challenges</h3>
+      <ul>
+        <li>Use a textbook index to answer a question about a topic (e.g., ecosystems).</li>
+        <li>Compare information from two different offline sources and list three similarities.</li>
+      </ul>
+
+      <h3>Shortcut Challenges</h3>
+      <ul>
+        <li>Navigate between at least five tabs using only <strong>Ctrl + Tab</strong>.</li>
+        <li>Switch between your browser and another app using <strong>Alt + Tab</strong>.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    Tactical OSINT Training Hub — built for students with limited resources, focusing on real research skills without AI tools.
+  </footer>
+</body>
+</html>
